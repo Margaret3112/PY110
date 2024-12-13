@@ -17,10 +17,22 @@ def products_view(request):
             if data:
                 return JsonResponse(data, json_dumps_params={'ensure_ascii': False,
                                                              'indent': 4})
-            return HttpResponseNotFound("Данного продукта нет в базе данных")
+            else:
+                return HttpResponseNotFound("Данного продукта нет в базе данных")
         else:
+            return JsonResponse([DATABASE[key]['name'] for key in DATABASE], safe=False, json_dumps_params={'ensure_ascii': False,
+                                                             'indent': 4})
 
-            products = [product.get("name") for product in DATABASE]
-            return JsonResponse(products, json_dumps_params={'ensure_ascii': False,
-                                                         'indent': 4})
-
+def products_page_view(request, page):
+    if request.method == "GET":
+        if isinstance(page, str):
+            for data in DATABASE.values():
+                if data['html'] == page:
+                    with open(f'store/products/{page}.html', 'r', encoding="utf-8") as f:
+                        return HttpResponse(f.readlines())
+        elif isinstance(page, int):
+            data = DATABASE.get(str(page))  # Получаем какой странице соответствует данный id
+            if data:
+                with  open(f'store/products/{data["html"]}.html', 'r', encoding="utf-8") as f:
+                    return HttpResponse(f.readlines())
+        return HttpResponse(status=404)
