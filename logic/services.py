@@ -76,9 +76,9 @@ def add_to_cart(id_product: str) -> bool:
 
     # TODO Не забываем записать обновленные данные cart в 'cart.json'. Так как именно из этого файла мы считываем данные и если мы не запишем изменения, то считать измененные данные не получится.
     if id_product == cart["products"][id_product]:
-        new = sum(cart["products"][id_product])
-        cart["products"][id_product] = new + 1
-
+        cart["products"][id_product] = len(cart["products"][id_product]) + 1
+    elif id_product in DATABASE:
+        cart["products"][id_product] = 1
     return True
 
 
